@@ -28,7 +28,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Create virtual environment
+      - name: Create virtualenv
         run: python -m venv venv
 
       - name: Install dependencies
@@ -62,7 +62,7 @@ jobs:
 
 
   # --------------------------------------------------
-  # 3. BUILD → SCAN → PUSH TO ECR
+  # 3. BUILD → SCAN → PUSH TO ECR (FIXED)
   # --------------------------------------------------
   build-scan-push:
     name: Build → Scan → Push to ECR
@@ -97,19 +97,19 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
 
       # -----------------------------
-      # Build Docker Image (local tag)
+      # Build Docker Image (LOCAL)
       # -----------------------------
       - name: Build Docker image
         run: |
           docker build -t $IMAGE_NAME:${{ github.sha }} .
 
       # -----------------------------
-      # Trivy Image Scan (FIXED)
+      # Trivy Scan (LOCAL IMAGE — FIX)
       # -----------------------------
       - name: Trivy Image Scan
         uses: aquasecurity/trivy-action@0.20.0
         with:
-          image-ref: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          image-ref: python/python-api:${{ github.sha }}
           scanners: vuln
           severity: CRITICAL,HIGH
           exit-code: 1
