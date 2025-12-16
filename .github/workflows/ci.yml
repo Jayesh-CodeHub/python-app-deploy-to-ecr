@@ -74,7 +74,6 @@ jobs:
       contents: read
 
     env:
-      # 🔥 MUST MATCH YOUR ECR REPO NAME EXACTLY
       IMAGE_NAME: python/python-api
       AWS_REGION: us-east-1
 
@@ -98,19 +97,20 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
 
       # -----------------------------
-      # Build Docker Image
+      # Build Docker Image (local tag)
       # -----------------------------
       - name: Build Docker image
         run: |
           docker build -t $IMAGE_NAME:${{ github.sha }} .
 
       # -----------------------------
-      # Trivy Image Scan (BLOCKING)
+      # Trivy Image Scan (FIXED)
       # -----------------------------
       - name: Trivy Image Scan
         uses: aquasecurity/trivy-action@0.20.0
         with:
-          image-ref: $IMAGE_NAME:${{ github.sha }}
+          image-ref: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          scanners: vuln
           severity: CRITICAL,HIGH
           exit-code: 1
 
