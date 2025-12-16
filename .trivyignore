@@ -1,0 +1,4 @@
+# Upstream FastAPI dependency limitation
+# CVE-2024-47874 fixed in Starlette >=0.40.0
+# FastAPI does not yet support that version
+CVE-2024-47874
